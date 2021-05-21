@@ -15,8 +15,15 @@
 #include "Viewer_SWITCH_AUTO_MANUAL.cpp"
 #include "Viewer_ADD_REMOVE_USER.cpp"
 #include <signal.h>
+
+//include Manual_Process controller& viewer
+#include "Controller_MANUAL_PROCESS.cpp"
+
+
+
 string mail_de_scris;
 using namespace std;
+
 using namespace Pistache;
 
 //Definition of the manualProcesses of the sensor class
@@ -61,10 +68,16 @@ class MPSensorEndPoint {
         
             Routes::Post(router, "/action/:addremove/:value", Routes::bind(&MPSensorEndPoint::setAction_addremove, this));
             Routes::Get(router, "/action/:addremove/", Routes::bind(&MPSensorEndPoint::getAction_addremove, this));
-         Routes::Post(router, "/action2/:addremove/:value", Routes::bind(&MPSensorEndPoint::setAction_interogare, this));
+            Routes::Post(router, "/action2/:addremove/:value", Routes::bind(&MPSensorEndPoint::setAction_interogare, this));
             Routes::Get(router, "/action2/:addremove/", Routes::bind(&MPSensorEndPoint::getAction_interogare, this));
-      
-       
+            
+            //Manual_process routes 
+            Routes::Get(router, "/actionCheckWindow/:id", Routes::bind(&Controller_Manual_Process::checkWindow, new Controller_Manual_Process));
+            Routes::Get(router, "/actionCloseWindow/:id", Routes::bind(&Controller_Manual_Process::closeWindow, new Controller_Manual_Process));
+            Routes::Get(router, "/actionOpenWindow/:id", Routes::bind(&Controller_Manual_Process::openWindow, new Controller_Manual_Process));
+            Routes::Get(router, "/actionGetAirQuality", Routes::bind(&Controller_Manual_Process::getAirQaulity, new Controller_Manual_Process));
+            Routes::Get(router, "/actionGetPM25", Routes::bind(&Controller_Manual_Process::getPM25, new Controller_Manual_Process));
+
         }
 // Endpoint ========================================================pachet1
     // Endpoint ========================================================pachet1
