@@ -1,13 +1,38 @@
 #include <stdlib.h>
+#include <fstream>
+#include <chrono>
 #include <time.h>
 #include <pistache/client.h>
 #include <unordered_map>
+#include <boost/interprocess/sync/file_lock.hpp>
 #include "json.hpp"
 
 using namespace Pistache;
 using json = nlohmann::json;
 
 class APIClient {
+
+public:
+	APIClient() {
+		srand (time(NULL));
+		output_lock = boost::interprocess::file_lock(filename);
+		auto opts = Http::Client::options().threads(2).maxConnectionsPerHost(8);
+		client.init(opts);
+		service_to_coords["waqi"]  = new std::vector<std::pair<double, double>>;
+		service_to_coords["aerlive"]  = new std::vector<std::pair<double, double>>;
+		populate();
+		fetch();
+	}
+	~APIClient() {
+		client.shutdown();
+		for (auto city = cities.begin(); city != cities.end(); city++) {
+			delete city->second;
+		}
+		for (auto stc = service_to_coords.begin(); stc != service_to_coords.end(); stc++) {
+			delete stc->second;
+		}
+	}
+
 private:
 	Http::Client client;
 	std::map<std::pair<double, double>, json> coords;
@@ -24,7 +49,10 @@ private:
 		{"waqi", "token=d5267f003a98fc2edfc09abb8fa7be4a6e1f77f6"},
 		{"aerlive", "key=d09668ea-def5-44ea-8c77-ae32e9fa5572"}
 	};
-	int sleep_time = 180;
+	const char* filename = "data.json";
+	std::ofstream output;
+	boost::interprocess::file_lock output_lock;
+	int sleep_time = 30;
 
 	void new_point(std::pair<double, double>& points, std::vector<Async::Promise<Http::Response>>& responses) {
 		if (coords.find(points) == coords.end()) {
@@ -131,7 +159,7 @@ private:
 
 		auto sync = Async::whenAll(responses.begin(), responses.end());
 		Async::Barrier<std::vector<Http::Response>> barrier(sync);
-		barrier.wait_for(std::chrono::seconds(5));
+		barrier.wait_for(std::chrono::seconds(sleep_time));
 
 		responses.clear();
 
@@ -156,7 +184,7 @@ private:
 
 		sync = Async::whenAll(responses.begin(), responses.end());
 		Async::Barrier<std::vector<Http::Response>> barrier2(sync);
-		barrier2.wait_for(std::chrono::seconds(5));
+		barrier2.wait_for(std::chrono::seconds(sleep_time));
 	}
 
 	void fetchWaqi(std::vector<Async::Promise<Http::Response>>& responses) {
@@ -273,38 +301,43 @@ private:
 		}
 	}
 
-	void fetch() {
-		//while (true) {
-			std::vector<Async::Promise<Http::Response>> responses;
-			// mutex start
-			fetchWaqi(responses);
-			fetchAerlive(responses);
-			auto sync = Async::whenAll(responses.begin(), responses.end());
-			Async::Barrier<std::vector<Http::Response>> barrier(sync);
-			barrier.wait_for(std::chrono::seconds(5));
-			compute_means();
-			// mutext stop
-		//	sleep(sleep_time);
-		//}
+	void print() {
+		output_lock.lock();
+		output.open(filename);
+		json print;
+		std::vector<std::pair<double, double>> coords_to_json;
+		for (auto it = coords.begin(); it != coords.end(); it++) {
+			auto values = it->second;
+			auto coords = std::to_string((it->first).first) + ',' + std::to_string((it->first).second);
+			print[coords] = values;
+			coords_to_json.push_back(it->first);
+		}
+		auto current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		print["coords_array"] = coords_to_json;
+		print["updated"] = ctime(&current_time);
+		output << print << std::endl;
+		output.close();
+		output_lock.unlock();
+		std::cout << "Wrote to file!" << std::endl;
 	}
 
-public:
-	APIClient() {
-		srand (time(NULL));
-		auto opts = Http::Client::options().threads(2).maxConnectionsPerHost(8);
-		client.init(opts);
-		service_to_coords["waqi"]  = new std::vector<std::pair<double, double>>;
-		service_to_coords["aerlive"]  = new std::vector<std::pair<double, double>>;
-		populate();
-		fetch();
-	}
-	~APIClient() {
-		client.shutdown();
-		for (auto city = cities.begin(); city != cities.end(); city++) {
-			delete city->second;
-		}
-		for (auto stc = service_to_coords.begin(); stc != service_to_coords.end(); stc++) {
-			delete stc->second;
+	void fetch() {
+		while (true) {
+			std::vector<Async::Promise<Http::Response>> responses;
+			try {
+				fetchWaqi(responses);
+				fetchAerlive(responses);
+				auto sync = Async::whenAll(responses.begin(), responses.end());
+				Async::Barrier<std::vector<Http::Response>> barrier(sync);
+				barrier.wait_for(std::chrono::seconds(sleep_time));
+				compute_means();
+			}
+			catch (...) {
+				sleep(sleep_time);
+				continue;
+			}
+			print();
+			sleep(sleep_time);
 		}
 	}
 };
