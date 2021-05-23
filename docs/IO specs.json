@@ -1,0 +1,93 @@
+{
+    "device-name": "Air Quality Sensor Master-Hub",
+    "device-type": "Sensor",
+    "buffers-count": 4,
+    "input-buffers":{
+        "1":{
+            "token-delimiters": "",
+            "protocol": "HTTP",
+            "prefix": "curl http://localhost:9080/", // end-user modifies internal state
+            "buffer-tokens":[
+            {
+                "name":"open_window/",
+                "description": "manually opens window of given ID",
+                "token-type":"integer",
+                "byte-size":4,
+                "regex-rule": "^[1-9][0-9]?$|^100$", // numbers from 1 to 100
+                "optional": false
+            },
+            {
+                "name":"close_window/",
+                "description": "manually closes window of given ID",
+                "token-type":"integer",
+                "byte-size":4,
+                "regex-rule": "^[1-9][0-9]?$|^100$", // numbers from 1 to 100
+                "optional": false
+            },
+            ]
+        },
+        "2":{
+            "token-delimiters": "",
+            "protocol": "HTTP",
+            "prefix": "curl -X POST http://localhost:9080/",
+            "buffer-tokens":[
+            {
+                "name":"webhook/ --data",
+                "description":"simulates a webhook that sensors push realtime data to",
+                "token-type":"json", 
+                "byte-size":30000, 
+                "regex-rule": "", // should be JSON, but regex for that is ugly
+                "optional": false
+            },
+            ]
+        }
+    },
+    "output-buffers":{
+        "1":{
+            "token-delimiters": "",
+            "protocol": "HTTP",
+            "prefix": "curl http://localhost:9080/", // end-user checks internal state
+            "buffer-tokens":[
+            {
+                "name":"get_aq/",
+                "description":"gets full air quality data for given coords, or for default location",
+                "token-type":"string", 
+                "byte-size":16, 
+                "regex-rule": "^(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?,(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$", // double,double
+                "optional": true
+            },
+            {
+                "name":"get_pm25/",
+                "description": "gets PM2.5 data for given coords, or for default location",
+                "token-type":"string",
+                "byte-size":16,
+                "regex-rule": "^(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?,(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$", // double,double
+                "optional": true
+            },
+            {
+                "name":"check_window/",
+                "description": "gets the status (open/closed) of window of given ID",
+                "token-type":"integer",
+                "byte-size":4,
+                "regex-rule": "^[1-9][0-9]?$|^100$", // numbers from 1 to 100
+                "optional": false
+            },
+        ]
+        },
+        "2":{
+            "token-delimiters": "",
+            "protocol": "HTTP",
+            "prefix": "curl -XGET http://localhost:9080/",
+            "buffer-tokens":[
+            {
+                "name":"data.json",
+                "description":"full data taken from remote sensor endpoints",
+                "token-type":"json", 
+                "byte-size":1024, 
+                "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [ready, auth, settings]
+                "optional": true
+            },
+            ]
+        }
+    }
+}
