@@ -1,4 +1,4 @@
-#include "../include/Window_Model.hpp"
+#pragma once
 
 class Peripherial_Model // interfata, pentru model general
 {

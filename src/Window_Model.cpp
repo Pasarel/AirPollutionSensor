@@ -14,7 +14,7 @@ void Peripherial_Model::setState(bool b) // schimba stadiul in care e
     peripherial_state = b;
 }
 
-Window::Window(bool f = false) // constructor care e by default false, I assume that the window is closed
+Window::Window(bool f) // constructor care e by default false, I assume that the window is closed
 {
     peripherial_state = f;
 }

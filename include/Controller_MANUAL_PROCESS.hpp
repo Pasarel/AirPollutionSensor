@@ -2,9 +2,17 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <pistache/net.h>
+#include <pistache/http.h>
+#include <pistache/peer.h>
+#include <pistache/http_headers.h>
+#include <pistache/cookie.h>
+#include <pistache/router.h>
+#include <pistache/endpoint.h>
+#include <pistache/common.h>
 #include <boost/interprocess/sync/file_lock.hpp>
-#include "Viewer_MANUAL_PROCESS.cpp"
-#include "Window_Model.cpp"
+#include "Viewer_MANUAL_PROCESS.hpp"
+#include "Window_Model.hpp"
 #include "json.hpp"
 
 using namespace std;
@@ -20,10 +28,7 @@ class Controller_Manual_Process {
   void readFromJSON(json & j);
   string closestSensor(pair < double, double > coords);
   pair < double, double > getCoordsFromRequest(const Rest::Request & request);
-  void closeWindow(const Rest::Request & request, Http::ResponseWriter response);
-  void checkWindow(const Rest::Request & request, Http::ResponseWriter response);
-  void getAirQuality(const Rest::Request & request, Http::ResponseWriter response);
-  void getPM25(const Rest::Request & request, Http::ResponseWriter response);
+
 public:
   Controller_Manual_Process();
   void openWindow(const Rest::Request & request, Http::ResponseWriter response);
