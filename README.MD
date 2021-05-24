@@ -1,47 +1,45 @@
-sudo apt install g++
-https://github.com/pistacheio/pistache
+# Smart Pollution Sensor Newtork
+Acesta este proiectul nostru la IP. Sperăm să obținem măcar nota 5!
 
-Ubuntu PPA (Unstable)
+## Dependințe
+Cerințele de sistem și bibliotecile de care e nevoie pentru rularea și compilarea acestui program sunt:
+'''
+Ubuntu 20.04 LTS
+libboost v1.71
+libpistache v0.0.002
+libpoco v1.9.2
+'''
+
+Toate dependințele se instalează automat, rulând scriptul ./install_dependencies:
+
+'''
+chmod +x install_dependencies.sh
+sudo ./install_dependencies
+'''
+
+## Compilare și rulare
+Programul are două componente: serverul propriu-zis și un crawler care preia date live de la senzori de pe internet. Ambele componente se pot compila rulând:
+
+'''
+make all
+'''
+
+Alternativ, se poate rula:
+
+'''
+make server // compilează doar serverul
+make crawler // compilează doar crawlerul
+'''
+
+Pentru funcționarea crawlerului, e necesară pornirea serverului:
+
+'''
+./server
+./crawler
+'''
 
 
-
-$ sudo add-apt-repository ppa:pistache+team/unstable
-$ sudo apt update
-$ sudo apt install libpistache-dev
-
-Ubuntu PPA (Stable)
-
-
-
-$ sudo add-apt-repository ppa:pistache+team/stable
-$ sudo apt update
-$ sudo apt install libpistache-dev
-
-
-sudo apt install g++
-https://github.com/pistacheio/pistache
-
-Ubuntu PPA (Unstable)
-
-
-
-$ sudo add-apt-repository ppa:pistache+team/unstable
-$ sudo apt update
-$ sudo apt install libpistache-dev
-
-Ubuntu PPA (Stable)
-
-
-
-$ sudo add-apt-repository ppa:pistache+team/stable
-$ sudo apt update
-$ sudo apt install libpistache-dev
-
-===
-g++ sensorpollution.cpp -o sensorpollution -lpistache -lcrypto -lssl -lpthread
- ./sensorpollution
- 
-
+## Rute
   =====action1========
  =====action1======== 
  =====action1========
@@ -64,12 +62,6 @@ curl  http://localhost:9080/action1/controlul_ferestrei/
 curl -X POST  http://localhost:9080/action2/e_mail/MAIL@yubi.com
 
 curl  http://localhost:9080/action2/e_mail/
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+## Au interpretat actorii
+Andrei-Alexandru Oltean, Bogdan Ioan Pintilie, Ioan Christian Tana, Sorin Alexandru Dobre, Mihai Alexandru Gheorghe.

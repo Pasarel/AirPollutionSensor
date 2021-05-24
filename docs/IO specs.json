@@ -74,20 +74,6 @@
             },
         ]
         },
-        "2":{
-            "token-delimiters": "",
-            "protocol": "HTTP",
-            "prefix": "curl -XGET http://localhost:9080/",
-            "buffer-tokens":[
-            {
-                "name":"data.json",
-                "description":"full data taken from remote sensor endpoints",
-                "token-type":"json", 
-                "byte-size":1024, 
-                "regex-rule": "[a-zA-Z]*", // Correct inputs will be: [ready, auth, settings]
-                "optional": true
-            },
-            ]
         }
     }
 }
