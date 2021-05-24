@@ -38,6 +38,13 @@ Pentru funcționarea crawlerului, e necesară pornirea serverului:
 ./crawler
 ```
 
+Serverul se poate porni și fără crawler:
+
+```
+./server
+```
+
+Dar atunci este necesară popularea din alta sursă a fișierului data.json, prin requesturi trimise la ruta webhookului. (Vezi mai jos.)
 
 ## Rute
   =====action1========
