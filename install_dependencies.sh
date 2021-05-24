@@ -1,3 +1,3 @@
-add-apt-repository ppa:pistache+team/unstable
-apt update
-apt install libboost-all-dev libpistache-dev libpoco-doc libpoco-dev
+add-apt-repository -y ppa:pistache+team/unstable
+apt -y update
+apt -y install libboost-all-dev libpistache-dev libpoco-doc libpoco-dev

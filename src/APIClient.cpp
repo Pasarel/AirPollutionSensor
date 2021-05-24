@@ -87,7 +87,12 @@ std::string APIClient::send_request(std::string method, std::string url) {
 
 void APIClient::clear_points() {
 	for (auto it = coords.begin(); it != coords.end(); ++it) {
-		std::cout << it->second["city"];
+		try {
+			city = it->second["city"];
+		}
+		catch (...) {
+			city = "none";
+		}
 		json details = {
 			{
 				"mean",
@@ -137,7 +142,7 @@ void APIClient::clear_points() {
 				},
 				"city",
 				{
-					it->second["city"]
+					city
 				}
 			}
 		};
