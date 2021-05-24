@@ -140,12 +140,19 @@ void Controller_Manual_Process::getAirQuality(const Rest::Request & request, Htt
 		readFromJSON(j);
 
 		message = "Senzorul de poluare din zona dumneavoastra a inregistrat urmatoarele date despre aer : ";
-		message += to_string(j[closestSensor(coords)]["mean"]);
+		message += "\nModul de citire a datelor: de exemplu 'CO:[1, 3]' inseamna valoarea medie de 1ug/m3 de monoxid de Carbon masurat de 3 senzori din apropiere.\n";
+		message += "\n\n - CO:" + to_string(j[closestSensor(coords)]["mean"]["CO"]);
+		message += "\n\n - NO2: " + to_string(j[closestSensor(coords)]["mean"]["NO2"]);
+		message += "\n\n - PM1:" + to_string(j[closestSensor(coords)]["mean"]["PM1"]);
+		message += "\n\n - PM10:" + to_string(j[closestSensor(coords)]["mean"]["PM10"]);
+		message += "\n\n - PM2.5:" + to_string(j[closestSensor(coords)]["mean"]["PM2.5"]);
+		message += "\n\n - SO2:" + to_string(j[closestSensor(coords)]["mean"]["SO2"]);
+
 		double airQualityValue;
 		string closestsensor = closestSensor(coords);
-		airQualityValue = j[closestsensor]["mean"]["CO"][0];
-		airQualityValue = j[closestsensor]["mean"]["CO"][1];
-		message += "\n" + closestsensor + " (" + to_string(j[closestsensor]["city"]) + ")";
+		airQualityValue = j[closestSensor(coords)]["mean"]["CO"][0];
+		airQualityValue = j[closestSensor(coords)]["mean"]["CO"][1];
+		//message += "\n" + closestsensor + " (" + to_string(j[closestSensor(coords)]["city"]) + ")";
 		if (airQualityValue <= 0.1) {
 			message += "\n\nAnalizand datele de mai sus, se poate spune ca aerul la momentul actual din zona dvs. nu este poluat!";
 		} else {
