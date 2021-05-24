@@ -87,6 +87,7 @@ std::string APIClient::send_request(std::string method, std::string url) {
 
 void APIClient::clear_points() {
 	for (auto it = coords.begin(); it != coords.end(); ++it) {
+		std::string city;
 		try {
 			city = it->second["city"];
 		}
