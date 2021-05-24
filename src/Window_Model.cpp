@@ -18,3 +18,9 @@ Window::Window(bool f) // constructor care e by default false, I assume that the
 {
     peripherial_state = f;
 }
+
+Window::Window(bool f, std::pair<double,double> coords)
+{
+	peripherial_state = f;
+	this->coords = coords;	
+}
