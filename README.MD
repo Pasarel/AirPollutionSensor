@@ -3,40 +3,40 @@ Acesta este proiectul nostru la IP. Sperăm să obținem măcar nota 5!
 
 ## Dependințe
 Cerințele de sistem și bibliotecile de care e nevoie pentru rularea și compilarea acestui program sunt:
-'''
+```
 Ubuntu 20.04 LTS
 libboost v1.71
 libpistache v0.0.002
 libpoco v1.9.2
-'''
+```
 
 Toate dependințele se instalează automat, rulând scriptul ./install_dependencies:
 
-'''
+```
 chmod +x install_dependencies.sh
 sudo ./install_dependencies
-'''
+```
 
 ## Compilare și rulare
 Programul are două componente: serverul propriu-zis și un crawler care preia date live de la senzori de pe internet. Ambele componente se pot compila rulând:
 
-'''
+```
 make all
-'''
+```
 
 Alternativ, se poate rula:
 
-'''
+```
 make server // compilează doar serverul
 make crawler // compilează doar crawlerul
-'''
+```
 
 Pentru funcționarea crawlerului, e necesară pornirea serverului:
 
-'''
+```
 ./server
 ./crawler
-'''
+```
 
 
 ## Rute
