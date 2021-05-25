@@ -1,5 +1,16 @@
 #include "../include/Controller_MANUAL_PROCESS.hpp"
 
+Controller_Manual_Process::Controller_Manual_Process() {
+	srand(time(NULL));
+	std::pair<double,double> coords;
+	windowsArray = vector < Window > (101);
+	for (int i = 1; i <= 100; i++) {
+		coords.first = (rand() % 4085 + 44025) / 1000;
+		coords.second = (rand() % 5761 + 23006) / 1000;
+		windowsArray[i].setCoords(coords);
+	}
+}
+
 void Controller_Manual_Process::readFromJSON(json & j) {
 	const char * filename = "data.json";
 	boost::interprocess::file_lock flock(filename);
@@ -61,10 +72,6 @@ pair < double, double > Controller_Manual_Process::getCoordsFromRequest(const Re
 	}
 }
 
-Controller_Manual_Process::Controller_Manual_Process() {
-	windowsArray = vector < Window > (101);
-}
-
 void Controller_Manual_Process::openWindow(const Rest::Request & request, Http::ResponseWriter response) {
 	Viewer_Manual_Process v;
 	json message;
@@ -115,7 +122,7 @@ void Controller_Manual_Process::checkWindow(const Rest::Request & request, Http:
 	string id = "";
 	if (request.hasParam(":id")) {
 		auto id = request.param(":id").as < int > ();
-		if (id >= 100) {
+		if (id > 100 || id < 1) {
 			message["code"] = 400;
 			message["state"] = "id invalid";
 		} else {
@@ -178,4 +185,66 @@ void Controller_Manual_Process::getPM25(const Rest::Request & request, Http::Res
 	} catch (string bad_params) {
 		response.send(Http::Code::Ok, view.getAirQuality(bad_params));
 	}
+}
+
+void Controller_Manual_Process::changeWindowCoords(const Rest::Request & request, Http::ResponseWriter response) {
+	Viewer_Manual_Process view;
+
+	string message = "";
+	auto id = request.param(":id").as < int > ();
+	if (id > 100 || id < 1) {
+		message = "id invalid";
+		response.send(Http::Code::Ok, message);
+	}
+
+	try {
+		pair < double, double > coords = getCoordsFromRequest(request);
+		windowsArray[id].setCoords(coords);
+		response.send(Http::Code::Ok, view.getAirQuality("k\n"));
+	} catch (string bad_params) {
+		response.send(Http::Code::Ok, view.getAirQuality(bad_params));
+	}
+}
+
+void Controller_Manual_Process::imgZoomIn(const Rest::Request & request, Http::ResponseWriter response) {
+	img.zoom_in();
+	json j;
+	j["code"] = 200;
+	j["message"] = "k";
+	response.send(Http::Code::Ok, j.dump());
+}
+void Controller_Manual_Process::imgZoomOut(const Rest::Request & request, Http::ResponseWriter response) {
+	img.zoom_out();
+	json j;
+	j["code"] = 200;
+	j["message"] = "k";
+	response.send(Http::Code::Ok, j.dump());
+}
+void Controller_Manual_Process::resetZoom(const Rest::Request & request, Http::ResponseWriter response) {
+	img.reset_zoom();
+	json j;
+	j["code"] = 200;
+	j["message"] = "k";
+	response.send(Http::Code::Ok, j.dump());
+}
+void Controller_Manual_Process::getImage(const Rest::Request & request, Http::ResponseWriter response) {
+	json jmessage;
+	string message;
+	if (request.hasParam(":id")) {
+		auto id = request.param(":id").as < int > ();
+		if (id > 100 || id < 1) {
+			jmessage["code"] = 400;
+			jmessage["state"] = "id invalid";
+			message = jmessage.dump();
+		} else {
+			auto coords = windowsArray[id].getCoords();
+			bool state  = windowsArray[id].getState();
+			message = img.getImage(coords.first, coords.second, state);
+		}
+	} else {
+		jmessage["code"] = 400;
+		jmessage["state"] = "Nu s-a transmis id-ul geamului!";
+		message = jmessage.dump();
+	}
+	response.send(Http::Code::Ok, message);
 }

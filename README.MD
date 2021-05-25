@@ -1,5 +1,5 @@
 # Smart Pollution Sensor Newtork
-Acesta este proiectul nostru la IP. Sperăm să obținem măcar nota 5!
+Rețea de senzori de poluare care permite controlarea ferestrei de acasă și verificarea în timp real a stării aerului din jurul unui anumit punct.
 
 ## Dependințe
 Cerințele de sistem și bibliotecile de care e nevoie pentru rularea și compilarea acestui program sunt:
@@ -46,29 +46,23 @@ Serverul se poate porni și fără crawler:
 
 Dar atunci este necesară popularea din alta sursă a fișierului data.json, prin requesturi trimise la ruta webhookului. (Vezi mai jos.)
 
-## Rute
-  =====action1========
- =====action1======== 
- =====action1========
- curl -X POST  http://localhost:9080/action1/controlul_ferestrei/manual
-curl -X POST  http://localhost:9080/action1/controlul_ferestrei/automat
-curl  http://localhost:9080/action1/controlul_ferestrei/
+## Ce face programul?
+![Sample image](sample.png?raw=true "Exemplu de output PNG")
 
-  =====action========
- =====action======== 
- =====action========
+Ascultă după notificări primite de la senzori de aer din teren și permite utilizatorului să controleze starea ferestrei lui de acasă (deschis/închis). Utilizatorul poate verifica în timp real nivelul de poluare al senzorilor de lângă casa lui, răspunsul primindu-l fie text, fie în format .PNG (codificat base64). Există și funcționalitate minimală de închidere automată a ferestrei și notificare prin email.
 
- curl -X POST  http://localhost:9080/action/e_mail/add_mail
- curl  http://localhost:9080/action/e_mail
+Cum niciunul din membrii acestei echipe nu dispune de vreo rețea personală de senzori de aer, notificările de la senzori sunt simulate de un crawler care agregă date de la waqi.info și aerlive.ro.
 
+Exemple de requesturi (întreaga specificație se găsește în docs/IO specs.json):
 
-  =====action2========
- =====action2======== 
- =====action2========
-
-curl -X POST  http://localhost:9080/action2/e_mail/MAIL@yubi.com
-
-curl  http://localhost:9080/action2/e_mail/
+```
+curl http://localhost:9080/open_window/:id
+curl http://localhost:9080/change_window_coords/:id/:coords
+curl http://localhost:9080/get_aq/:coords // primește date în format text despre calitatea aerului la coordonatele date
+curl http://localhost:9080/img/get/:id    // primește o imagine .png (base64) cu starea aerului în jurul geamului dat
+curl -X POST  http://localhost:9080/action1/controlul_ferestrei/automat // schimbă modul ferestrei din manual în automat
+curl -X POST http://localhost:9080/webhook --data [json] // trimite manual (fără crawler) date despre aer către webhook
+```
 
 ## Au interpretat actorii
 Andrei-Alexandru Oltean, Bogdan Ioan Pintilie, Ioan Christian Tana, Sorin Alexandru Dobre, Mihai Alexandru Gheorghe.

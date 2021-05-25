@@ -10,6 +10,7 @@
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
+#include <Poco/Base64Encoder.h>
 #include <Poco/StreamCopier.h>
 #include <Poco/Path.h>
 #include <Poco/URI.h>
@@ -25,6 +26,12 @@ class APIClient {
 public:
 	APIClient();
 	~APIClient();
+	void init();
+	void fetch();
+	std::string send_request(std::string method, std::string url, std::string body, std::map<std::string,std::string> headers, bool SSL);
+	std::string send_request(std::string method, std::string url, std::string body, std::map<std::string,std::string> headers);
+	std::string send_request(std::string method, std::string url);
+	std::string b64_get(std::string host, std::string path);
 private:
 	std::map<std::pair<double, double>, json> coords;
 	std::unordered_map<std::string, std::vector<std::pair<double, double>>*> cities;
@@ -42,9 +49,6 @@ private:
 	};
 	int sleep_time = 30;
 
-	std::string send_request(std::string method, std::string url, std::string body, std::map<std::string,std::string> headers, bool SSL);
-	std::string send_request(std::string method, std::string url, std::string body, std::map<std::string,std::string> headers);
-	std::string send_request(std::string method, std::string url);
 	void clear_points();
 	void new_point(std::pair<double, double>& points);
 	void reverse_geocode(std::pair<double, double>& pct);
@@ -54,5 +58,4 @@ private:
 	void compute_means();
 	void notify_webhook(json data);
 	json jsonize();
-	void fetch();
 };

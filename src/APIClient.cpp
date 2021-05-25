@@ -3,6 +3,9 @@
 // output fisier: harta romania + senzori + ferestre
 
 APIClient::APIClient() {
+}
+
+void APIClient::init() {
 	srand(time(NULL));
 	service_to_coords["waqi"] = new std::vector < std::pair < double, double >> ;
 	service_to_coords["aerlive"] = new std::vector < std::pair < double, double >> ;
@@ -13,7 +16,6 @@ APIClient::APIClient() {
 		std::cerr << "failed to populate" << std::endl;
 		return;
 	}
-	fetch();
 }
 
 APIClient::~APIClient() {
@@ -39,8 +41,9 @@ std::string APIClient::send_request(std::string method, std::string url, std::st
 		}
 		
 		std::string path(uri.getPathAndQuery());
+		//std::cout << url << std::endl;
+
 		if (path.empty()) path = "/";
-		
 		if (method == "POST") {
 			HTTPRequest req(HTTPRequest::HTTP_POST, path, HTTPMessage::HTTP_1_1);
 			req.setContentType("application/x-www-form-urlencoded");
@@ -83,6 +86,37 @@ std::string APIClient::send_request(std::string method, std::string url) {
 	std::string body = "placeholder";
 	std::map<std::string,std::string> headers;
 	return send_request(method, url, body, headers);
+}
+
+std::string APIClient::b64_get(std::string host, std::string path) {
+	try
+	{
+		URI uri(host);
+		HTTPSClientSession session(uri.getHost(), uri.getPort());
+
+		if (path.empty()) path = "/";
+		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+		std::ostream& os = session.sendRequest(req);
+		
+		HTTPResponse res;
+		
+		std::istream &is = session.receiveResponse(res);
+		std::stringstream ss;
+		//ss.str("");
+
+		Base64Encoder b64(ss);		
+		StreamCopier::copyStream(is, b64);
+		b64.close();
+
+		std::string ret = ss.str();
+		ret.erase(std::remove(ret.begin(), ret.end(), '\r'), ret.end() );
+		return ret;
+	}
+	catch (Exception &ex)
+	{
+		std::cerr << ex.displayText() << std::endl;
+		return "";
+	}
 }
 
 void APIClient::clear_points() {
@@ -238,7 +272,7 @@ void APIClient::populate() {
 	json waqi_sensors;
 	json aerlive_sensors;
 
-	auto body = send_request("GET", "https://server" + std::to_string(rand() % 9 + 1) + "." + endpoints["waqi"] + endpoints["waqi_full_ro"] + "&" + tokens["waqi"]);
+	auto body = send_request("GET", "https://server" + std::to_string(rand() % 8 + 1) + "." + endpoints["waqi"] + endpoints["waqi_full_ro"] + "&" + tokens["waqi"]);
 	waqi_sensors = json::parse(body);
 
 	for (auto sensor: waqi_sensors["data"]) {
@@ -269,7 +303,7 @@ void APIClient::populate() {
 
 void APIClient::fetchWaqi() {
 	for (auto it: * service_to_coords["waqi"]) {
-		std::string url = "https://server" + std::to_string(rand() % 9 + 1) + "." + endpoints["waqi"] + endpoints["waqi_station"] + std::to_string(it.first) + ";" + std::to_string(it.second) + "/?" + tokens["waqi"];
+		std::string url = "https://server" + std::to_string(rand() % 8 + 1) + "." + endpoints["waqi"] + endpoints["waqi_station"] + std::to_string(it.first) + ";" + std::to_string(it.second) + "/?" + tokens["waqi"];
 		auto body = send_request("GET", url); // client.get(url).send();
 
 		auto data = json::parse(body)["data"];
@@ -404,8 +438,4 @@ void APIClient::fetch() {
 			continue;
 		}
 	}
-}
-
-int main(int argc, char * argv[]) {
-	APIClient c;
 }

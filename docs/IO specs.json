@@ -24,6 +24,30 @@
                 "regex-rule": "^[1-9][0-9]?$|^100$", // numbers from 1 to 100
                 "optional": false
             },
+            {
+                "name":"change_window_coords/",
+                "description": "changes coordinates of given window",
+                "token-type":"integer",
+                "byte-size":4,
+                "regex-rule": "^[1-9][0-9]?$|^100/(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?,(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$", // /id/coords
+                "optional": false
+            },
+            {
+                "name":"action1/controlul_ferestrei/",
+                "description": "changes behaviour of window (auto vs. manual)",
+                "token-type":"integer",
+                "byte-size":32,
+                "regex-rule": "(manual|automat)",
+                "optional": false
+            },
+            {
+                "name":"action/e_mail/add_mail/",
+                "description": "adds email to mailing list",
+                "token-type":"integer",
+                "byte-size":256,
+                "regex-rule": "*",
+                "optional": false
+            }
             ]
         },
         "2":{
@@ -38,7 +62,7 @@
                 "byte-size":30000, 
                 "regex-rule": "", // should be JSON, but regex for that is ugly
                 "optional": false
-            },
+            }
             ]
         }
     },
@@ -72,8 +96,55 @@
                 "regex-rule": "^[1-9][0-9]?$|^100$", // numbers from 1 to 100
                 "optional": false
             },
+            {
+                "name":"action2/e_mail/",
+                "description": "checks whether emails exists in mailing list",
+                "token-type":"integer",
+                "byte-size":256,
+                "regex-rule": "*",
+                "optional": false
+            }
         ]
         },
+        "2":{
+            "token-delimiters": "",
+            "protocol": "HTTP",
+            "prefix": "curl http://localhost:9080/img", // end-user checks internal state
+            "buffer-tokens":[
+            {
+                "name":"get/",
+                "description":"shows map of sensors near window of given ID",
+                "token-type":"integer", 
+                "byte-size":4, 
+                "regex-rule": "^[1-9][0-9]?$|^100$", // numbers from 1 to 100
+                "optional": false
+            },
+            {
+                "name":"zoom_in/",
+                "description": "zooms in on any map request",
+                "token-type":"",
+                "byte-size":"",
+                "regex-rule": "",
+                "optional": true
+            },
+            {
+                "name":"zoom_out/",
+                "description": "zooms out of any map request",
+                "token-type":"",
+                "byte-size":"",
+                "regex-rule": "",
+                "optional": true
+            },
+            {
+                "name":"zoom_reset/",
+                "description": "resets zoom on all map requests",
+                "token-type":"",
+                "byte-size":"",
+                "regex-rule": "",
+                "optional": true
+            }
+        ]
+        }
         }
     }
 }

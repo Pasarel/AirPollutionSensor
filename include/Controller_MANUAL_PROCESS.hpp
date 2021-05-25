@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <ctime>
 #include <pistache/net.h>
 #include <pistache/http.h>
 #include <pistache/peer.h>
@@ -13,6 +14,7 @@
 #include <boost/interprocess/sync/file_lock.hpp>
 #include "Viewer_MANUAL_PROCESS.hpp"
 #include "Window_Model.hpp"
+#include "Image.hpp"
 #include "json.hpp"
 
 using namespace std;
@@ -24,6 +26,7 @@ class Controller_Manual_Process {
   const double geoLongitude = 26.126609;
   vector<Window> windowsArray;
   Viewer_Manual_Process view;
+  ImageClient img;
 
   void readFromJSON(json & j);
   string closestSensor(pair < double, double > coords);
@@ -35,6 +38,12 @@ public:
   void closeWindow(const Rest::Request & request, Http::ResponseWriter response);
   // check if the window is open or not
   void checkWindow(const Rest::Request & request, Http::ResponseWriter response);
+  void changeWindowCoords(const Rest::Request & request, Http::ResponseWriter response);
   void getAirQuality(const Rest::Request & request, Http::ResponseWriter response);
   void getPM25(const Rest::Request & request, Http::ResponseWriter response);
+
+  void imgZoomIn(const Rest::Request & request, Http::ResponseWriter response);
+  void imgZoomOut(const Rest::Request & request, Http::ResponseWriter response);
+  void resetZoom(const Rest::Request & request, Http::ResponseWriter response);
+  void getImage(const Rest::Request & request, Http::ResponseWriter response);
 };

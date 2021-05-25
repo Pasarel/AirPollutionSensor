@@ -1,4 +1,5 @@
 #pragma once
+#include <utility>
 
 class Peripherial_Model // interfata, pentru model general
 {
@@ -15,5 +16,7 @@ class Window: public Peripherial_Model {
 public: 
 	Window(bool f = false); // constructor care e by default false, I assume that the window is closed
 	Window(bool f, std::pair<double,double> coords);
+	std::pair<double,double> getCoords();
+	void setCoords(std::pair<double,double>);
 	std::pair<double, double> coords;
 };

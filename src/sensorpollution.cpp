@@ -59,8 +59,14 @@ private:
 	  Routes::Get(router, "/check_window/:id?", Routes::bind( & Controller_Manual_Process::checkWindow, &man_proc_cntrl));
 	  Routes::Get(router, "/close_window/:id?", Routes::bind( & Controller_Manual_Process::closeWindow, &man_proc_cntrl));
 	  Routes::Get(router, "/open_window/:id?", Routes::bind( & Controller_Manual_Process::openWindow, &man_proc_cntrl));
+	  Routes::Get(router, "/change_window_coords/:id/:coords", Routes::bind( & Controller_Manual_Process::changeWindowCoords, &man_proc_cntrl));
 	  Routes::Get(router, "/get_aq/:coords?", Routes::bind( & Controller_Manual_Process::getAirQuality, &man_proc_cntrl));
 	  Routes::Get(router, "/get_pm25/:coords?", Routes::bind( & Controller_Manual_Process::getPM25, &  man_proc_cntrl));
+
+	  Routes::Get(router, "/img/zoom_in", Routes::bind( & Controller_Manual_Process::imgZoomIn, &  man_proc_cntrl));
+	  Routes::Get(router, "/img/zoom_out", Routes::bind( & Controller_Manual_Process::imgZoomOut, &  man_proc_cntrl));
+	  Routes::Get(router, "/img/zoom_reset", Routes::bind( & Controller_Manual_Process::resetZoom, &  man_proc_cntrl));
+	  Routes::Get(router, "/img/get/:id?", Routes::bind( & Controller_Manual_Process::getImage, &  man_proc_cntrl));
 
 	  Routes::Post(router, "/webhook", Routes::bind( & Webhook::push, & webhook));
   }

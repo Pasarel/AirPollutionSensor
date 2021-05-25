@@ -24,3 +24,13 @@ Window::Window(bool f, std::pair<double,double> coords)
 	peripherial_state = f;
 	this->coords = coords;	
 }
+
+void Window::setCoords(std::pair<double,double> coords)
+{
+	this->coords = coords;
+}
+
+std::pair<double,double> Window::getCoords()
+{
+	return this->coords;
+}
